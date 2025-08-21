@@ -31,12 +31,9 @@ const OrderPage: React.FC = () => {
           <h2 style={{ marginBottom: '20px', color: '#2C3E50' }}>
             Build Your Lemonade
           </h2>
-
           <PresetList onPresetSelect={setCurrentSpec} />
-
           <Customizer spec={currentSpec} onSpecChange={setCurrentSpec} />
         </div>
-
         <CartSummary />
       </div>
 

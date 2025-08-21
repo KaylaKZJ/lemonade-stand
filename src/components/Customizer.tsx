@@ -35,8 +35,6 @@ const Customizer: React.FC<CustomizerProps> = ({ spec, onSpecChange }) => {
 
   return (
     <div className='customizer' onKeyDown={handleKeyDown} tabIndex={0}>
-      <h3>Build Your Lemonade</h3>
-
       <PricePreview
         price={formatCurrency(unitPrice, pricing.currency)}
         label='Unit Price'

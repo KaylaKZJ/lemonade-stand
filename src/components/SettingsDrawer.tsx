@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLemonadeStore } from '../store';
 import type { PricingRules } from '../types';
 import Stepper from './Stepper';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const SettingsDrawer: React.FC = () => {
-  const { pricing, ui, hideSettingsDrawer, updatePricing } = useLemonadeStore();
+  const { pricing, theme, ui, hideSettingsDrawer, updatePricing, setTheme } =
+    useLemonadeStore();
   const [localPricing, setLocalPricing] = useState<PricingRules>(pricing);
 
   useEffect(() => {
@@ -236,6 +238,11 @@ const SettingsDrawer: React.FC = () => {
                 }
               />
             </div>
+          </div>
+
+          <div className='settings-section'>
+            <h4>Appearance</h4>
+            <ThemeSwitcher currentTheme={theme} onThemeChange={setTheme} />
           </div>
 
           <div

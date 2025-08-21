@@ -41,6 +41,7 @@ export interface Order {
 export interface AppState {
   order: Order;
   pricing: PricingRules;
+  theme: 'light' | 'dark' | 'high-contrast';
   ui: {
     showPayment: boolean;
     showReceipt: boolean;

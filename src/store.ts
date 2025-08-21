@@ -26,6 +26,7 @@ interface LemonadeStore extends AppState {
   hideSettingsDrawer: () => void;
   showToast: (type: 'info' | 'warn' | 'error', msg: string) => void;
   hideToast: () => void;
+  setTheme: (theme: 'light' | 'dark' | 'high-contrast') => void;
 
   // Payment
   processPayment: (method: 'cash' | 'card' | 'other', amount?: number) => void;
@@ -62,6 +63,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
     (set, get) => ({
       order: createEmptyOrder(),
       pricing: defaultPricing,
+      theme: 'light' as const,
       ui: {
         showPayment: false,
         showReceipt: false,
@@ -238,6 +240,15 @@ export const useLemonadeStore = create<LemonadeStore>()(
             showSettings: false,
           },
         });
+      },
+
+      setTheme: (theme) => {
+        set({ theme });
+        // Apply theme to document
+        document.documentElement.setAttribute(
+          'data-theme',
+          theme === 'light' ? '' : theme
+        );
       },
     }),
     {
