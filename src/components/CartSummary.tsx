@@ -22,14 +22,15 @@ const CartSummary: React.FC = () => {
   const handleSaveEdit = () => {
     if (edit.item) {
       useLemonadeStore.getState().updateLemonade(edit.item.id, edit.spec);
-      setEdit({
-        item: null,
-        spec: pricing.defaultSpec,
-      });
+      clearEdit();
     }
   };
 
   const handleCancelEdit = () => {
+    clearEdit();
+  };
+
+  const clearEdit = () => {
     setEdit({
       item: null,
       spec: pricing.defaultSpec,

@@ -2,6 +2,9 @@ import React from 'react';
 import type { LemonadeSpec } from '../types';
 import { useLemonadeStore } from '../store';
 import { calculateUnitPrice, formatCurrency } from '../utils';
+import PricePreview from './PricePreview';
+import StepperGroup from './StepperGroup';
+import QuantityHint from './QuantityHint';
 
 interface CustomizerProps {
   spec: LemonadeSpec;
@@ -15,17 +18,6 @@ const Customizer: React.FC<CustomizerProps> = ({ spec, onSpecChange }) => {
 
   const unitPrice = calculateUnitPrice(spec, pricing);
   const isMaxItems = order.items.length >= 10;
-
-  const updateLevel = (key: keyof LemonadeSpec, value: number) => {
-    const clampedValue = Math.max(0, Math.min(5, value)) as
-      | 0
-      | 1
-      | 2
-      | 3
-      | 4
-      | 5;
-    onSpecChange({ ...spec, [key]: clampedValue });
-  };
 
   const handleAdd = () => {
     if (!isMaxItems) {
@@ -45,84 +37,14 @@ const Customizer: React.FC<CustomizerProps> = ({ spec, onSpecChange }) => {
     <div className='customizer' onKeyDown={handleKeyDown} tabIndex={0}>
       <h3>Build Your Lemonade</h3>
 
-      <div className='price-preview'>
-        <div className='price-preview-amount'>
-          {formatCurrency(unitPrice, pricing.currency)}
-        </div>
-      </div>
+      <PricePreview
+        price={formatCurrency(unitPrice, pricing.currency)}
+        label='Unit Price'
+      />
 
-      <div className='steppers'>
-        <div className='stepper'>
-          <span className='stepper-label'>Sugar (tsp)</span>
-          <div className='stepper-controls'>
-            <button
-              className='stepper-btn'
-              onClick={() => updateLevel('sugar', spec.sugar - 1)}
-              disabled={spec.sugar === 0}
-              aria-label='Decrease sugar'
-            >
-              −
-            </button>
-            <span className='stepper-value'>{spec.sugar}</span>
-            <button
-              className='stepper-btn'
-              onClick={() => updateLevel('sugar', spec.sugar + 1)}
-              disabled={spec.sugar === 5}
-              aria-label='Increase sugar'
-            >
-              +
-            </button>
-          </div>
-        </div>
+      <StepperGroup spec={spec} onSpecChange={onSpecChange} />
 
-        <div className='stepper'>
-          <span className='stepper-label'>Lemons (wedges)</span>
-          <div className='stepper-controls'>
-            <button
-              className='stepper-btn'
-              onClick={() => updateLevel('lemons', spec.lemons - 1)}
-              disabled={spec.lemons === 0}
-              aria-label='Decrease lemons'
-            >
-              −
-            </button>
-            <span className='stepper-value'>{spec.lemons}</span>
-            <button
-              className='stepper-btn'
-              onClick={() => updateLevel('lemons', spec.lemons + 1)}
-              disabled={spec.lemons === 5}
-              aria-label='Increase lemons'
-            >
-              +
-            </button>
-          </div>
-        </div>
-
-        <div className='stepper'>
-          <span className='stepper-label'>Ice (cubes)</span>
-          <div className='stepper-controls'>
-            <button
-              className='stepper-btn'
-              onClick={() => updateLevel('ice', spec.ice - 1)}
-              disabled={spec.ice === 0}
-              aria-label='Decrease ice'
-            >
-              −
-            </button>
-            <span className='stepper-value'>{spec.ice}</span>
-            <button
-              className='stepper-btn'
-              onClick={() => updateLevel('ice', spec.ice + 1)}
-              disabled={spec.ice === 5}
-              aria-label='Increase ice'
-            >
-              +
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className='quantity-hint'>Items: {order.items.length} / 10</div>
+      <QuantityHint current={order.items.length} max={10} />
 
       <button
         className='btn btn-primary'
