@@ -1,10 +1,9 @@
 import React from 'react';
-import { useLemonadeStore } from '../store';
-import { formatCurrency } from '../utils';
+import { useStore } from '../store';
+import { formatCurrency } from '../operations/utils';
 
 const ReceiptModal: React.FC = () => {
-  const { order, pricing, ui, hideReceiptModal, startNewOrder } =
-    useLemonadeStore();
+  const { order, pricing, ui, hideReceiptModal, startNewOrder } = useStore();
 
   if (!ui.showReceipt) return null;
 
@@ -60,7 +59,7 @@ const ReceiptModal: React.FC = () => {
               color: '#2C3E50',
             }}
           >
-            🍋 Sunny's Lemonade Stand
+            🍋 Sunny's Stand
           </h1>
           <div style={{ fontSize: '0.875rem', color: '#6C757D' }}>
             Order #{order.id}
@@ -102,9 +101,7 @@ const ReceiptModal: React.FC = () => {
               {order.items.map((item, index) => (
                 <tr key={item.id}>
                   <td style={{ padding: '8px 0' }}>
-                    <div style={{ marginBottom: '4px' }}>
-                      Lemonade #{index + 1}
-                    </div>
+                    <div style={{ marginBottom: '4px' }}>#{index + 1}</div>
                     <div
                       style={{
                         fontSize: '0.75rem',

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useLemonadeStore } from './store';
+import { useStore } from './store';
 import OrderPage from './components/OrderPage';
 import './App.css';
 
 function App() {
-  const { theme } = useLemonadeStore();
+  const { theme } = useStore();
 
   useEffect(() => {
     // Apply the current theme to the document

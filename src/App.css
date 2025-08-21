@@ -336,13 +336,13 @@ body {
 }
 
 .stepper-btn {
-  width: 36px;
-  height: 36px;
+  width: 35px;
+  height: 35px;
   border: none;
   border-radius: var(--border-radius-full);
   background: var(--primary-color);
   color: var(--text-light);
-  font-size: 1.2rem;
+  font-size: 15px;
   font-weight: var(--font-weight-bold);
   cursor: pointer;
   transition: all 0.2s ease;

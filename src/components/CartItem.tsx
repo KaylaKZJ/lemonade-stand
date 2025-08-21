@@ -1,23 +1,23 @@
 import React from 'react';
-import type { LemonadeItem } from '../types';
-import { useLemonadeStore } from '../store';
-import { formatCurrency } from '../utils';
+import type { Item } from '../operations/types';
+import { useStore } from '../store';
+import { formatCurrency } from '../operations/utils';
 
 interface CartItemProps {
-  item: LemonadeItem;
-  onEdit: (item: LemonadeItem) => void;
+  item: Item;
+  onEdit: (item: Item) => void;
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item, onEdit }) => {
-  const { removeLemonade, duplicateLemonade, pricing } = useLemonadeStore();
+  const { remove, duplicate, pricing } = useStore();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Backspace') {
       e.preventDefault();
-      removeLemonade(item.id);
+      remove(item.id);
     } else if (e.ctrlKey && e.key === 'd') {
       e.preventDefault();
-      duplicateLemonade(item.id);
+      duplicate(item.id);
     }
   };
 
@@ -46,13 +46,13 @@ const CartItem: React.FC<CartItemProps> = ({ item, onEdit }) => {
         </button>
         <button
           className='btn btn-small btn-secondary'
-          onClick={() => duplicateLemonade(item.id)}
+          onClick={() => duplicate(item.id)}
         >
           Duplicate
         </button>
         <button
           className='btn btn-small btn-danger'
-          onClick={() => removeLemonade(item.id)}
+          onClick={() => remove(item.id)}
         >
           Remove
         </button>

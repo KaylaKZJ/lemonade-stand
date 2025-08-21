@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useLemonadeStore } from '../store';
+import { useStore } from '../store';
 
 const Toast: React.FC = () => {
-  const { ui, hideToast } = useLemonadeStore();
+  const { ui, hideToast } = useStore();
 
   useEffect(() => {
     if (ui.toast) {

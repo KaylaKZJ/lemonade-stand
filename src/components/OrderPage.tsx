@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLemonadeStore } from '../store';
+import React from 'react';
+import { useStore } from '../store';
 import PresetList from './PresetList';
 import Customizer from './Customizer';
 import CartSummary from './CartSummary';
@@ -9,8 +9,7 @@ import SettingsDrawer from './SettingsDrawer';
 import Toast from './Toast';
 
 const OrderPage: React.FC = () => {
-  const { pricing, showSettingsDrawer } = useLemonadeStore();
-  const [currentSpec, setCurrentSpec] = useState(pricing.defaultSpec);
+  const { showSettingsDrawer, currentSpec, setCurrentSpec } = useStore();
 
   return (
     <div className='app'>

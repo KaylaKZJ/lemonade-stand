@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLemonadeStore } from '../store';
-import type { PricingRules } from '../types';
+import { useStore } from '../store';
+import type { PricingRules } from '../operations/types';
 import Stepper from './Stepper';
 import { ThemeSwitcher } from './ThemeSwitcher';
 
 const SettingsDrawer: React.FC = () => {
   const { pricing, theme, ui, hideSettingsDrawer, updatePricing, setTheme } =
-    useLemonadeStore();
+    useStore();
   const [localPricing, setLocalPricing] = useState<PricingRules>(pricing);
 
   useEffect(() => {
@@ -86,63 +86,36 @@ const SettingsDrawer: React.FC = () => {
             </div>
 
             <div className='form-group'>
-              <label className='form-label' htmlFor='sugar-step'>
-                Sugar Step Price ({localPricing.currency})
-              </label>
-              <input
-                id='sugar-step'
-                type='number'
-                step='0.01'
-                min='0'
-                className='form-input'
-                value={localPricing.sugarStepPrice || 0}
-                onChange={(e) =>
-                  setLocalPricing((prev) => ({
-                    ...prev,
-                    sugarStepPrice: parseFloat(e.target.value) || 0,
-                  }))
-                }
-              />
-            </div>
-
-            <div className='form-group'>
-              <label className='form-label' htmlFor='lemon-step'>
-                Lemon Step Price ({localPricing.currency})
-              </label>
-              <input
-                id='lemon-step'
-                type='number'
-                step='0.01'
-                min='0'
-                className='form-input'
-                value={localPricing.lemonStepPrice || 0}
-                onChange={(e) =>
-                  setLocalPricing((prev) => ({
-                    ...prev,
-                    lemonStepPrice: parseFloat(e.target.value) || 0,
-                  }))
-                }
-              />
-            </div>
-
-            <div className='form-group'>
-              <label className='form-label' htmlFor='ice-step'>
-                Ice Step Price ({localPricing.currency})
-              </label>
-              <input
-                id='ice-step'
-                type='number'
-                step='0.01'
-                min='0'
-                className='form-input'
-                value={localPricing.iceStepPrice || 0}
-                onChange={(e) =>
-                  setLocalPricing((prev) => ({
-                    ...prev,
-                    iceStepPrice: parseFloat(e.target.value) || 0,
-                  }))
-                }
-              />
+              {localPricing.extras?.map((extra, index) => (
+                <div key={index} className='form-group'>
+                  <label className='form-label' htmlFor={`extra-${index}`}>
+                    {extra.item} Price ({localPricing.currency})
+                  </label>
+                  <input
+                    id={`extra-${index}`}
+                    type='number'
+                    step='0.01'
+                    min='0'
+                    className='form-input'
+                    value={extra.price}
+                    onChange={(e) => {
+                      const newExtras: PricingRules['extras'] = [
+                        {
+                          id: extra.id,
+                          item: extra.item,
+                          price: parseFloat(e.target.value) || 0,
+                          label: extra.label,
+                          unit: extra.unit,
+                        },
+                      ];
+                      setLocalPricing((prev) => ({
+                        ...prev,
+                        extras: newExtras,
+                      }));
+                    }}
+                  />
+                </div>
+              ))}
             </div>
 
             <div className='form-group'>

@@ -1,27 +1,27 @@
 import React from 'react';
-import type { LemonadeSpec } from '../types';
-import { useLemonadeStore } from '../store';
-import { calculateUnitPrice, formatCurrency } from '../utils';
+import type { Spec } from '../operations/types';
+import { useStore } from '../store';
+import { calculateUnitPrice, formatCurrency } from '../operations/utils';
 import PricePreview from './PricePreview';
 import StepperGroup from './StepperGroup';
 import QuantityHint from './QuantityHint';
 
 interface CustomizerProps {
-  spec: LemonadeSpec;
-  onSpecChange: (spec: LemonadeSpec) => void;
+  spec: Spec;
+  onSpecChange: (spec: Spec) => void;
 }
 
 const Customizer: React.FC<CustomizerProps> = ({ spec, onSpecChange }) => {
-  const pricing = useLemonadeStore((state) => state.pricing);
-  const addLemonade = useLemonadeStore((state) => state.addLemonade);
-  const order = useLemonadeStore((state) => state.order);
+  const pricing = useStore((state) => state.pricing);
+  const add = useStore((state) => state.add);
+  const order = useStore((state) => state.order);
 
   const unitPrice = calculateUnitPrice(spec, pricing);
   const isMaxItems = order.items.length >= 10;
 
   const handleAdd = () => {
     if (!isMaxItems) {
-      addLemonade(spec);
+      add(spec);
       onSpecChange(pricing.defaultSpec);
     }
   };
@@ -41,7 +41,6 @@ const Customizer: React.FC<CustomizerProps> = ({ spec, onSpecChange }) => {
       />
 
       <StepperGroup spec={spec} onSpecChange={onSpecChange} />
-
       <QuantityHint current={order.items.length} max={10} />
 
       <button
@@ -50,7 +49,7 @@ const Customizer: React.FC<CustomizerProps> = ({ spec, onSpecChange }) => {
         disabled={isMaxItems}
         style={{ width: '100%' }}
       >
-        Add Lemonade
+        Add
       </button>
     </div>
   );

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLemonadeStore } from '../store';
-import { formatCurrency } from '../utils';
+import { useStore } from '../store';
+import { formatCurrency } from '../operations/utils';
 
 const PaymentModal: React.FC = () => {
-  const { order, pricing, ui, hidePaymentModal, processPayment } =
-    useLemonadeStore();
+  const { order, pricing, ui, hidePaymentModal, processPayment } = useStore();
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'other'>(
     'cash'
   );

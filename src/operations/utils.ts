@@ -1,4 +1,4 @@
-import type { LemonadeSpec, PricingRules } from './types';
+import type { PricingRules, Spec } from './types';
 
 // Generate a simple UUID
 export function generateId(): string {
@@ -6,25 +6,16 @@ export function generateId(): string {
 }
 
 // Price calculation based on spec
-export function calculateUnitPrice(
-  spec: LemonadeSpec,
-  pricing: PricingRules
-): number {
-  const {
-    basePrice,
-    defaultSpec,
-    sugarStepPrice = 0,
-    lemonStepPrice = 0,
-    iceStepPrice = 0,
-  } = pricing;
+export function calculateUnitPrice(spec: Spec, pricing: PricingRules): number {
+  const { basePrice, extras } = pricing;
 
-  const sugarUpcharge =
-    Math.max(0, spec.sugar - defaultSpec.sugar) * sugarStepPrice;
-  const lemonUpcharge =
-    Math.max(0, spec.lemons - defaultSpec.lemons) * lemonStepPrice;
-  const iceUpcharge = Math.max(0, spec.ice - defaultSpec.ice) * iceStepPrice;
+  const upcharge =
+    extras?.reduce((total, extra) => {
+      const extraAmount = spec[extra.item as keyof Spec] || 0;
+      return total + extraAmount * extra.price;
+    }, 0) || 0;
 
-  return basePrice + sugarUpcharge + lemonUpcharge + iceUpcharge;
+  return basePrice + +upcharge;
 }
 
 // Calculate order totals
@@ -52,6 +43,6 @@ export function formatCurrency(
 }
 
 // Format spec for display
-export function formatSpec(spec: LemonadeSpec): string {
+export function formatSpec(spec: Spec): string {
   return `Sugar:${spec.sugar} Lemons:${spec.lemons} Ice:${spec.ice}`;
 }

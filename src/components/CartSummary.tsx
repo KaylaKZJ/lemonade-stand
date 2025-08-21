@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import type { LemonadeItem } from '../types';
-import { useLemonadeStore } from '../store';
-import { formatCurrency } from '../utils';
+import type { Item } from '../operations/types';
+import { useStore } from '../store';
+import { formatCurrency } from '../operations/utils';
 import CartItem from './CartItem';
 import Customizer from './Customizer';
 
 const CartSummary: React.FC = () => {
-  const { order, pricing, clearOrder, showPaymentModal } = useLemonadeStore();
+  const { order, pricing, clearOrder, showPaymentModal } = useStore();
   const [edit, setEdit] = useState({
-    item: null as LemonadeItem | null,
+    item: null as Item | null,
     spec: pricing.defaultSpec,
   });
 
-  const handleEdit = (item: LemonadeItem) => {
+  const handleEdit = (item: Item) => {
     setEdit({
       item,
       spec: item.spec,
@@ -21,7 +21,7 @@ const CartSummary: React.FC = () => {
 
   const handleSaveEdit = () => {
     if (edit.item) {
-      useLemonadeStore.getState().updateLemonade(edit.item.id, edit.spec);
+      useStore.getState().update(edit.item.id, edit.spec);
       clearEdit();
     }
   };
@@ -62,7 +62,7 @@ const CartSummary: React.FC = () => {
         <div className='empty-state'>
           <div className='empty-state-icon'>🍋</div>
           <h3>Your cart is empty</h3>
-          <p>Build your first lemonade!</p>
+          <p>Build your first !</p>
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ const CartSummary: React.FC = () => {
 
       {edit.item ? (
         <div style={{ marginBottom: '20px' }}>
-          <h4 style={{ marginBottom: '16px' }}>Edit Lemonade</h4>
+          <h4 style={{ marginBottom: '16px' }}>Edit </h4>
           <Customizer
             spec={edit.spec}
             onSpecChange={(spec) => setEdit((prev) => ({ ...prev, spec }))}

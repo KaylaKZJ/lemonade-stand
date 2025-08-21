@@ -2,19 +2,26 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type {
   AppState,
-  LemonadeItem,
-  LemonadeSpec,
+  Item,
+  Spec,
   Order,
   PricingRules,
-} from './types';
-import { generateId, calculateUnitPrice, calculateOrderTotals } from './utils';
+} from './operations/types';
+import {
+  generateId,
+  calculateUnitPrice,
+  calculateOrderTotals,
+} from './operations/utils';
+import { presets } from './operations/constants';
+import { PresetNames } from './operations/enums';
 
-interface LemonadeStore extends AppState {
+interface Store extends AppState {
   // Actions
-  addLemonade: (spec: LemonadeSpec) => void;
-  removeLemonade: (itemId: string) => void;
-  updateLemonade: (itemId: string, spec: LemonadeSpec) => void;
-  duplicateLemonade: (itemId: string) => void;
+  add: (spec: Spec) => void;
+  remove: (itemId: string) => void;
+  update: (itemId: string, spec: Spec) => void;
+  setCurrentSpec: (spec: Spec) => void;
+  duplicate: (itemId: string) => void;
   clearOrder: () => void;
 
   // UI actions
@@ -41,9 +48,29 @@ interface LemonadeStore extends AppState {
 const defaultPricing: PricingRules = {
   basePrice: 15.0,
   defaultSpec: { sugar: 2, lemons: 2, ice: 3 },
-  sugarStepPrice: 0.5,
-  lemonStepPrice: 1.0,
-  iceStepPrice: 0.0,
+  extras: [
+    {
+      id: 'sugar',
+      item: 'sugar',
+      label: 'Sugar',
+      unit: 'tsp',
+      price: 0.5,
+    },
+    {
+      id: 'lemons',
+      item: 'lemons',
+      label: 'Lemons',
+      unit: 'wedges',
+      price: 1.0,
+    },
+    {
+      id: 'ice',
+      item: 'ice',
+      label: 'Ice',
+      unit: 'cubes',
+      price: 0.0,
+    },
+  ],
   taxRate: 0.15,
   currency: 'ZAR',
 };
@@ -58,11 +85,16 @@ const createEmptyOrder = (): Order => ({
   createdAt: new Date().toISOString(),
 });
 
-export const useLemonadeStore = create<LemonadeStore>()(
+const getDefaultSpec = (): Spec => {
+  return presets.find((preset) => preset.name === PresetNames.CLASSIC)!.spec;
+};
+
+export const useStore = create<Store>()(
   persist(
     (set, get) => ({
       order: createEmptyOrder(),
       pricing: defaultPricing,
+      currentSpec: getDefaultSpec(),
       theme: 'light' as const,
       ui: {
         showPayment: false,
@@ -70,7 +102,11 @@ export const useLemonadeStore = create<LemonadeStore>()(
         showSettings: false,
       },
 
-      addLemonade: (spec: LemonadeSpec) => {
+      setCurrentSpec: (spec: Spec) => {
+        set({ currentSpec: spec });
+      },
+
+      add: (spec: Spec) => {
         const state = get();
         if (state.order.items.length >= 10) {
           set((state) => ({
@@ -83,7 +119,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
         }
 
         const unitPrice = calculateUnitPrice(spec, state.pricing);
-        const newItem: LemonadeItem = {
+        const newItem: Item = {
           id: generateId(),
           spec,
           unitPrice,
@@ -101,7 +137,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
         }));
       },
 
-      removeLemonade: (itemId: string) => {
+      remove: (itemId: string) => {
         const state = get();
         const newItems = state.order.items.filter((item) => item.id !== itemId);
         const totals = calculateOrderTotals(newItems, state.pricing.taxRate);
@@ -115,7 +151,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
         }));
       },
 
-      updateLemonade: (itemId: string, spec: LemonadeSpec) => {
+      update: (itemId: string, spec: Spec) => {
         const state = get();
         const unitPrice = calculateUnitPrice(spec, state.pricing);
         const newItems = state.order.items.map((item) =>
@@ -132,7 +168,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
         }));
       },
 
-      duplicateLemonade: (itemId: string) => {
+      duplicate: (itemId: string) => {
         const state = get();
         if (state.order.items.length >= 10) {
           set((state) => ({
@@ -149,7 +185,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
         );
         if (!itemToDuplicate) return;
 
-        const newItem: LemonadeItem = {
+        const newItem: Item = {
           id: generateId(),
           spec: itemToDuplicate.spec,
           unitPrice: itemToDuplicate.unitPrice,
@@ -252,7 +288,7 @@ export const useLemonadeStore = create<LemonadeStore>()(
       },
     }),
     {
-      name: 'lemonade-store',
+      name: '-store',
       partialize: (state) => ({ pricing: state.pricing }),
     }
   )
